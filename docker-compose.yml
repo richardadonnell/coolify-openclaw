@@ -9,8 +9,8 @@ services:
       - traefik.http.services.openclaw.loadbalancer.server.port=8080
     environment:
       # Provider (at least one required)
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN:-}
+      - ANTHROPIC_API_KEY=
+      - COPILOT_GITHUB_TOKEN=
       # Auth
       - AUTH_PASSWORD=${AUTH_PASSWORD:-$(openssl rand -hex 16)}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-$(openssl rand -hex 32)}
