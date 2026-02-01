@@ -24,7 +24,9 @@ services:
       - HOOKS_ENABLED=${HOOKS_ENABLED:-true}
       - HOOKSTOKEN=${SERVICE_PASSWORD_HOOKSTOKEN}
     volumes:
-      - openclaw-data:/data
+      - openclaw-workspace:/data/workspace
+      - openclaw-state:/data/.openclaw
+      - openclaw-local:/data/.local
     depends_on:
       - browser
     restart: unless-stopped
@@ -53,5 +55,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  openclaw-data:
+  openclaw-workspace:
+  openclaw-state:
+  openclaw-local:
   browser-data:
