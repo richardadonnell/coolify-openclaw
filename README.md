@@ -20,6 +20,24 @@ docker run -d \
 - `OPENCLAW_GATEWAY_TOKEN` — internal API token; auto-generated if omitted, but set it explicitly for stable API access
 - `/data` — persists state, config, and workspace across restarts
 
+### Coolify Deployment (Recommended)
+
+Deploy to [Coolify](https://coolify.io) for automatic SSL, domain management, and zero-config deployments:
+
+1. **Add new resource** in Coolify → Docker Compose
+2. **Connect repository**: `https://github.com/coollabsio/openclaw` (or your fork)
+3. **Set environment variables**:
+   - `DOMAIN` — your domain (e.g., `openclaw.yourdomain.com`)
+   - `ANTHROPIC_API_KEY` — your AI provider key
+   - `AUTH_PASSWORD` — Web UI password
+   - `OPENCLAW_GATEWAY_TOKEN` — Generate with `openssl rand -hex 32`
+   - `VNC_PW` — Browser desktop password (optional)
+4. **Deploy** — Coolify handles SSL certificates, port routing, and updates automatically
+
+The `docker-compose.yml` uses Traefik labels instead of port mappings, eliminating port conflicts and enabling Coolify's reverse proxy to manage routing.
+
+**Accessing the browser desktop**: Uncomment the browser `labels` section in `docker-compose.yml` to expose VNC via `browser.${DOMAIN}`.
+
 ### Full Setup (docker-compose)
 
 Includes persistent storage, browser sidecar (CDP + VNC), and webhook hooks. See [`docker-compose.yml`](docker-compose.yml).
@@ -31,7 +49,7 @@ docker compose up -d
 **After starting:**
 
 1. **Openclaw UI** — `http://localhost:8080` (login: `admin` / your `AUTH_PASSWORD`)
-2. **Browser desktop** — `https://localhost:6901` (password: your `VNC_PW`) — use this to log into sites that need auth (OAuth, 2FA, captchas). Openclaw reuses the session via CDP.
+2. **Browser desktop** — Enable browser labels in docker-compose.yml to access via web
 
 ## Architecture
 

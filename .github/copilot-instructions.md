@@ -2,6 +2,10 @@
 
 🛑🛑🛑 BEFORE DOING ANYTHING ELSE, THE FIRST STEP IS ALWAYS USING `CONTEXT7` MCP OR `PERPLEXITY` MCP TO CHECK THE OFFICIAL DOCS, BEFORE MAKING ANY CHANGES!RUN AS MANY SEARCHES AS YOU HAVE TO UNTIL YOU FULLY UNDERSTAND THE CORRECT APPROACH!
 
+- Coolify Docs: https://context7.com/websites/coolify_io
+- Docker Docs: https://context7.com/websites/docker
+- Openclaw Docs: https://context7.com/websites/openclaw_ai
+
 ## Project Overview
 
 This repository builds and publishes Docker images for [Openclaw](https://github.com/openclaw/openclaw), an AI coding agent with multi-channel support (Telegram, Discord, Slack, WhatsApp). The images include an nginx reverse proxy with HTTP basic auth and environment-variable-driven configuration.
@@ -89,6 +93,24 @@ Same build matrix as auto-update.yml, but no image push — validation only.
 
 ## Common Tasks
 
+### Coolify Deployment
+
+**Port mapping strategy**: Use Traefik labels instead of `ports` directive to avoid conflicts and let Coolify manage routing:
+
+```yaml
+services:
+  openclaw:
+    labels:
+      - "coolify.managed=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.openclaw.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.services.openclaw.loadbalancer.server.port=8080"
+```
+
+**Why no ports**: Coolify docs warn that using `ports` bypasses proxy control and may expose private services. Labels tell Traefik which internal port to route to without mapping to host.
+
+**Browser VNC access**: Uncomment labels in `docker-compose.yml` to expose via `browser.${DOMAIN}`. By default, browser is only accessible within Docker network for CDP.
+
 ### Local Development
 
 Build base image locally:
@@ -104,8 +126,8 @@ docker build -f Dockerfile -t openclaw:local --build-arg BASE_IMAGE=openclaw-bas
 Test with docker-compose (mounts custom config + browser sidecar):
 ```bash
 docker compose up -d
+# For local testing, you may need to add port mappings temporarily
 # Access UI: http://localhost:8080 (admin / <AUTH_PASSWORD>)
-# Access browser desktop: https://localhost:6901 (<VNC_PW>)
 ```
 
 ### Adding a New Provider
@@ -147,6 +169,7 @@ Nginx config is generated dynamically by entrypoint.sh (line ~100+). Changes req
 - **State directory**: `/data/.openclaw` (mounted as volume), `HOME` set to parent so `~/.openclaw` resolves correctly
 - **Workspace directory**: `/data/workspace` (agent file operations target here)
 - **Gateway bind**: Always `loopback` (127.0.0.1) — nginx is the public interface
+- **Coolify deployment**: Use Traefik labels instead of port mappings (see docker-compose.yml) — prevents port conflicts, enables SSL/domain management
 
 ## Files Reference
 
