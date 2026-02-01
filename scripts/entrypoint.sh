@@ -147,16 +147,19 @@ if [ ! -f "$ONBOARD_MARKER" ]; then
   fi
 
   if [ "${#PROVIDER_ARGS[@]}" -gt 0 ]; then
-    openclaw onboard --non-interactive \
+    if openclaw onboard --non-interactive \
       --accept-risk \
       --mode local \
       --gateway-port "$GATEWAY_PORT" \
       --gateway-bind loopback \
       --skip-skills \
       "${PROVIDER_ARGS[@]}" \
-      2>&1 || true
-
-    touch "$ONBOARD_MARKER"
+      2>&1; then
+      touch "$ONBOARD_MARKER"
+      echo "[entrypoint] onboarding completed, marker written"
+    else
+      echo "[entrypoint] onboarding failed, will retry on next start"
+    fi
   fi
 fi
 
