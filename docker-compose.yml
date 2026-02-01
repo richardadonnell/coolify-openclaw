@@ -1,29 +1,26 @@
 services:
   openclaw:
     image: coollabsio/openclaw:latest
-    # Use labels instead of ports for Coolify/Traefik routing
-    # This prevents port conflicts and lets Coolify manage SSL/domains
+    # Coolify/Traefik labels for routing and SSL
     labels:
-      - "coolify.managed=true"
-      - "traefik.enable=true"
-      - "traefik.http.routers.openclaw.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.services.openclaw.loadbalancer.server.port=8080"
+      - coolify.managed=true
+      - traefik.enable=true
+      - traefik.http.routers.openclaw.rule=Host(`${DOMAIN}`)
+      - traefik.http.services.openclaw.loadbalancer.server.port=8080
     environment:
       # Provider (at least one required)
-      - ANTHROPIC_API_KEY=sk-ant-...
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:?}
       # Auth
-      - AUTH_PASSWORD=changeme
-      - OPENCLAW_GATEWAY_TOKEN=my-secret-token
-      # Browser sidecar
+      - AUTH_PASSWORD=${AUTH_PASSWORD:?}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:?}
+      # Browser sidecar (internal Docker networking)
       - BROWSER_CDP_URL=http://browser:9222
-      - BROWSER_EVALUATE_ENABLED=true
+      - BROWSER_EVALUATE_ENABLED=${BROWSER_EVALUATE_ENABLED:-true}
       # Hooks (optional)
-      # - HOOKS_ENABLED=true
-      # - HOOKS_TOKEN=my-hook-secret
+      - HOOKS_ENABLED=${HOOKS_ENABLED:-}
+      - HOOKS_TOKEN=${HOOKS_TOKEN:-}
     volumes:
       - openclaw-data:/data
-      # Optional: custom JSON config for complex settings (groups, plugins, etc.)
-      # - ./my-openclaw.json:/app/config/openclaw.json
     depends_on:
       - browser
     restart: unless-stopped
@@ -31,15 +28,15 @@ services:
   browser:
     image: kasmweb/chrome:1.18.0
     environment:
-      - VNC_PW=changeme
+      - VNC_PW=${VNC_PW:-changeme}
       - CHROME_ARGS=--remote-debugging-port=9222 --remote-debugging-address=0.0.0.0
     # Browser accessible only within Docker network by default
     # Uncomment labels below to expose VNC web desktop via Coolify proxy
     # labels:
-    #   - "coolify.managed=true"
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.browser.rule=Host(`browser.${DOMAIN}`)"
-    #   - "traefik.http.services.browser.loadbalancer.server.port=6901"
+    #   - coolify.managed=true
+    #   - traefik.enable=true
+    #   - traefik.http.routers.browser.rule=Host(`browser.${DOMAIN}`)
+    #   - traefik.http.services.browser.loadbalancer.server.port=6901
     volumes:
       - browser-data:/home/kasm-user
     shm_size: 2g
