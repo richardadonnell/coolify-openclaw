@@ -9,11 +9,11 @@ services:
       - traefik.http.services.openclaw.loadbalancer.server.port=8080
     environment:
       # Provider (at least one required)
-      - ANTHROPIC_API_KEY=
-      - OPENAI_API_KEY=
-      - OPENROUTER_API_KEY=
-      - GEMINI_API_KEY=
-      - COPILOT_GITHUB_TOKEN=
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
       # Auth (Coolify auto-generates passwords)
       - AUTH_PASSWORD=${AUTH_PASSWORD}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
