@@ -61,6 +61,104 @@ export OPENCLAW_WORKSPACE_DIR="$WORKSPACE_DIR"
 # (symlinks are detected as separate paths).
 export HOME="${STATE_DIR%/.openclaw}"
 
+# ── One-time non-interactive onboarding (if needed) ─────────────────────────
+ONBOARD_MARKER="$STATE_DIR/.onboarded"
+if [ ! -f "$ONBOARD_MARKER" ]; then
+  echo "[entrypoint] running openclaw onboard --non-interactive (one-time)"
+
+  PROVIDER_ARGS=()
+
+  if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice apiKey --anthropic-api-key "$ANTHROPIC_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${OPENAI_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice openai-api-key --openai-api-key "$OPENAI_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${OPENROUTER_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice apiKey --token-provider openrouter --token "$OPENROUTER_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${GEMINI_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice gemini-api-key --gemini-api-key "$GEMINI_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && { [ -n "${OPENCODE_API_KEY:-}" ] || [ -n "${OPENCODE_ZEN_API_KEY:-}" ]; }; then
+    OPENCODE_KEY="${OPENCODE_API_KEY:-$OPENCODE_ZEN_API_KEY}"
+    PROVIDER_ARGS=(--auth-choice opencode-zen --opencode-zen-api-key "$OPENCODE_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${COPILOT_GITHUB_TOKEN:-}" ]; then
+    echo "[entrypoint] github copilot auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${XAI_API_KEY:-}" ]; then
+    echo "[entrypoint] xAI auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${GROQ_API_KEY:-}" ]; then
+    echo "[entrypoint] Groq auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${MISTRAL_API_KEY:-}" ]; then
+    echo "[entrypoint] Mistral auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${CEREBRAS_API_KEY:-}" ]; then
+    echo "[entrypoint] Cerebras auth not supported for non-interactive onboarding"
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${VENICE_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice venice-api-key --venice-api-key "$VENICE_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${MOONSHOT_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice moonshot-api-key --moonshot-api-key "$MOONSHOT_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${KIMI_API_KEY:-}" ]; then
+    echo "[entrypoint] Kimi auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${MINIMAX_API_KEY:-}" ]; then
+    echo "[entrypoint] MiniMax auth not supported for non-interactive onboarding"
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${SYNTHETIC_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice synthetic-api-key --synthetic-api-key "$SYNTHETIC_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${ZAI_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice zai-api-key --zai-api-key "$ZAI_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${AI_GATEWAY_API_KEY:-}" ]; then
+    PROVIDER_ARGS=(--auth-choice ai-gateway-api-key --ai-gateway-api-key "$AI_GATEWAY_API_KEY")
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${XIAOMI_API_KEY:-}" ]; then
+    echo "[entrypoint] Xiaomi auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${AWS_ACCESS_KEY_ID:-}" ] && [ -n "${AWS_SECRET_ACCESS_KEY:-}" ]; then
+    echo "[entrypoint] Bedrock auth not supported for non-interactive onboarding"
+  fi
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ] && [ -n "${OLLAMA_BASE_URL:-}" ]; then
+    echo "[entrypoint] Ollama auth not supported for non-interactive onboarding"
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -eq 0 ]; then
+    echo "[entrypoint] no supported provider found for non-interactive onboarding"
+  fi
+
+  if [ "${#PROVIDER_ARGS[@]}" -gt 0 ]; then
+    openclaw onboard --non-interactive \
+      --mode local \
+      --gateway-port "$GATEWAY_PORT" \
+      --gateway-bind loopback \
+      --skip-skills \
+      "${PROVIDER_ARGS[@]}" \
+      2>&1 || true
+
+    touch "$ONBOARD_MARKER"
+  fi
+fi
+
 # ── Configure openclaw from env vars ─────────────────────────────────────────
 echo "[entrypoint] running configure..."
 node /app/scripts/configure.js
