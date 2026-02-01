@@ -158,6 +158,17 @@ map \$http_upgrade \$connection_upgrade {
     ''      close;
 }
 
+map \$arg_token \$ocw_has_token {
+    ''      0;
+    default 1;
+}
+
+map "\$ocw_has_token:\$args" \$ocw_proxy_args {
+    ~^1:.*  \$args;
+    ~^0:$   "token=${GATEWAY_TOKEN}";
+    ~^0:.+  "\$args&token=${GATEWAY_TOKEN}";
+}
+
 server {
     listen 8080 default_server;
     server_name _;
@@ -180,7 +191,7 @@ server {
     location / {
         ${AUTH_BLOCK}
 
-        proxy_pass http://127.0.0.1:${GATEWAY_PORT};
+        proxy_pass http://127.0.0.1:${GATEWAY_PORT}\$uri?\$ocw_proxy_args;
         proxy_set_header Authorization "Bearer ${GATEWAY_TOKEN}";
 
         proxy_set_header Host \$host;
