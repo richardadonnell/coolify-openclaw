@@ -563,11 +563,23 @@ if (config.channels && Object.keys(config.channels).length === 0) {
 
 // ── Hooks (webhook automation) ───────────────────────────────────────────────
 if (process.env.HOOKS_ENABLED === "true" || process.env.HOOKS_ENABLED === "1") {
-  console.log("[configure] configuring hooks (from env)");
+  console.log("[configure] hooks enabled via environment");
   ensure(config, "hooks");
   config.hooks.enabled = true;
-  if (process.env.HOOKSTOKEN) config.hooks.token = process.env.HOOKSTOKEN;
-  if (process.env.HOOKS_PATH)  config.hooks.path = process.env.HOOKS_PATH;
+
+  // The user confirmed that SERVICE_PASSWORD_HOOKSTOKEN (mapped to HOOKSTOKEN) works.
+  const tokenValue = (process.env.HOOKSTOKEN || process.env.HOOKS_TOKEN || "").trim();
+  if (tokenValue) {
+    config.hooks.token = tokenValue;
+    console.log(`[configure] hooks.token updated (length: ${tokenValue.length})`);
+  } else if (config.hooks.token) {
+    console.log("[configure] hooks.token preserved from config");
+  } else {
+    console.error("[configure] ERROR: HOOKS_ENABLED set but no token found in HOOKSTOKEN or HOOKS_TOKEN.");
+  }
+
+  // Ensure path is set
+  config.hooks.path = (process.env.HOOKS_PATH || config.hooks.path || "/hooks").trim();
 } else if (config.hooks) {
   console.log("[configure] hooks configured (from custom JSON)");
 }
