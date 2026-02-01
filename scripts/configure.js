@@ -307,12 +307,12 @@ if (ollamaUrl) {
 
 // ── Primary model selection (first available provider wins) ─────────────────
 const primaryCandidates = [
-  [process.env.ANTHROPIC_API_KEY,      "anthropic/claude-opus-4-5-20251101"],
+  [process.env.ANTHROPIC_API_KEY,      "anthropic/claude-sonnet-4-5-20251101"],
   [process.env.OPENAI_API_KEY,         "openai/gpt-5.2"],
   [process.env.OPENROUTER_API_KEY,     "openrouter/anthropic/claude-opus-4-5"],
   [process.env.GEMINI_API_KEY,         "google/gemini-2.5-pro"],
   [opencodeKey,                        "opencode/claude-opus-4-5"],
-  [process.env.COPILOT_GITHUB_TOKEN,   "github-copilot/claude-opus-4-5"],
+  [process.env.COPILOT_GITHUB_TOKEN,   "github-copilot/claude-sonnet-4-5"],
   [process.env.XAI_API_KEY,            "xai/grok-3"],
   [process.env.GROQ_API_KEY,           "groq/llama-3.3-70b-versatile"],
   [process.env.MISTRAL_API_KEY,        "mistral/mistral-large-latest"],
