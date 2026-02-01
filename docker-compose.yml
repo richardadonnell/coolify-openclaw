@@ -32,11 +32,11 @@ services:
       - CHROME_ARGS=--remote-debugging-port=9222 --remote-debugging-address=0.0.0.0
     # Browser accessible only within Docker network by default
     # Uncomment labels below to expose VNC web desktop via Coolify proxy
-    # labels:
-    #   - coolify.managed=true
-    #   - traefik.enable=true
-    #   - traefik.http.routers.browser.rule=Host(`browser.${DOMAIN}`)
-    #   - traefik.http.services.browser.loadbalancer.server.port=6901
+    labels:
+      - coolify.managed=true
+      - traefik.enable=true
+      - traefik.http.routers.browser.rule=Host(`browser.${DOMAIN}`)
+      - traefik.http.services.browser.loadbalancer.server.port=6901
     volumes:
       - browser-data:/home/kasm-user
     shm_size: 2g
