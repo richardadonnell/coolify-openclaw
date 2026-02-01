@@ -4,3 +4,5 @@ npm-debug.log*
 .DS_Store
 my-openclaw.json
 docs/
+.github/skills/
+.github/copilot-instructions.md

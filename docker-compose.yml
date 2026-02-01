@@ -1,6 +1,6 @@
 services:
   openclaw:
-    image: coollabsio/openclaw:latest
+    build: .
     # Coolify/Traefik labels for routing and SSL
     labels:
       - coolify.managed=true

@@ -598,9 +598,9 @@ if (process.env.BROWSER_CDP_URL) {
     br.snapshotDefaults.mode = process.env.BROWSER_SNAPSHOT_MODE;
   }
   if (process.env.BROWSER_REMOTE_TIMEOUT_MS)
-    br.remoteCdpTimeoutMs = parseInt(process.env.BROWSER_REMOTE_TIMEOUT_MS, 10);
+    br.remoteCdpTimeoutMs = Number.parseInt(process.env.BROWSER_REMOTE_TIMEOUT_MS, 10);
   if (process.env.BROWSER_REMOTE_HANDSHAKE_TIMEOUT_MS)
-    br.remoteCdpHandshakeTimeoutMs = parseInt(process.env.BROWSER_REMOTE_HANDSHAKE_TIMEOUT_MS, 10);
+    br.remoteCdpHandshakeTimeoutMs = Number.parseInt(process.env.BROWSER_REMOTE_HANDSHAKE_TIMEOUT_MS, 10);
   if (process.env.BROWSER_DEFAULT_PROFILE)
     br.defaultProfile = process.env.BROWSER_DEFAULT_PROFILE;
 } else if (config.browser) {
