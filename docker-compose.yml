@@ -15,14 +15,14 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
       # Auth (Coolify auto-generates passwords)
-      - AUTH_PASSWORD=${AUTH_PASSWORD}
-      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - AUTH_PASSWORD=${SERVICE_PASSWORD_AUTH}
+      - OPENCLAW_GATEWAY_TOKEN=${SERVICE_PASSWORD_GATEWAY}
       # Browser sidecar (internal Docker networking)
       - BROWSER_CDP_URL=http://browser:9222
       - BROWSER_EVALUATE_ENABLED=${BROWSER_EVALUATE_ENABLED:-true}
       # Hooks (optional, auto-generated if enabled)
       - HOOKS_ENABLED=${HOOKS_ENABLED:-true}
-      - HOOKS_TOKEN=${HOOKS_TOKEN_64}
+      - HOOKS_TOKEN=${SERVICE_PASSWORD_HOOKS_TOKEN}
     volumes:
       - openclaw-data:/data
     depends_on:
@@ -32,7 +32,7 @@ services:
   browser:
     image: kasmweb/chrome:1.18.0
     environment:
-      - VNC_PW=${SERVICE_PASSWORD_BROWSER}
+      - VNC_PW=${SERVICE_PASSWORD_VNC}
       - CHROME_ARGS=--remote-debugging-port=9222 --remote-debugging-address=0.0.0.0
     # Browser accessible only within Docker network by default
     # Uncomment labels below to expose VNC web desktop via Coolify proxy
