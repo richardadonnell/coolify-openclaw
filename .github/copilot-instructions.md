@@ -2,6 +2,7 @@
 
 🛑🛑🛑 BEFORE DOING ANYTHING ELSE, THE FIRST STEP IS ALWAYS USING `CONTEXT7` MCP OR `PERPLEXITY` MCP TO CHECK THE OFFICIAL DOCS, BEFORE MAKING ANY CHANGES!RUN AS MANY SEARCHES AS YOU HAVE TO UNTIL YOU FULLY UNDERSTAND THE CORRECT APPROACH!
 
+Use the `context7` mcp tools to check these official docs:
 - Coolify Docs: https://context7.com/websites/coolify_io
 - Docker Docs: https://context7.com/websites/docker
 - Openclaw Docs: https://context7.com/websites/openclaw_ai
