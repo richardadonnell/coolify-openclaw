@@ -22,7 +22,7 @@ services:
       - BROWSER_EVALUATE_ENABLED=${BROWSER_EVALUATE_ENABLED:-true}
       # Hooks (optional, auto-generated if enabled)
       - HOOKS_ENABLED=${HOOKS_ENABLED:-true}
-      - HOOKS_TOKEN=${SERVICE_PASSWORD_HOOKSTOKEN}
+      - HOOKS_TOKEN=${SERVICE_PASSWORD_HOOKS_TOKEN}
     volumes:
       - openclaw-data:/data
     depends_on:
