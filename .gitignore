@@ -3,6 +3,8 @@ npm-debug.log*
 .env
 .DS_Store
 my-openclaw.json
-docs/
-.github/skills/
+docs
+.github/skills
 .github/copilot-instructions.md
+.agents
+.crush
