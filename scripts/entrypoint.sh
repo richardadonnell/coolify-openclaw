@@ -274,8 +274,8 @@ server {
 
     location = /healthz {
         access_log off;
-        proxy_pass http://127.0.0.1:${GATEWAY_PORT}/;
-      proxy_set_header Authorization "Bearer ${GATEWAY_TOKEN}";
+        proxy_pass http://127.0.0.1:${GATEWAY_PORT}/health;
+        proxy_set_header Authorization "Bearer ${GATEWAY_TOKEN}";
         proxy_set_header Host \$host;
         proxy_connect_timeout 2s;
         error_page 502 503 504 = @healthz_fallback;
