@@ -28,6 +28,12 @@ services:
     depends_on:
       - browser
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+      start_period: 20s
 
   browser:
     image: kasmweb/chrome:1.18.0
