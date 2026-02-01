@@ -9,16 +9,17 @@ services:
       - traefik.http.services.openclaw.loadbalancer.server.port=8080
     environment:
       # Provider (at least one required)
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:?}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN:-}
       # Auth
-      - AUTH_PASSWORD=${AUTH_PASSWORD:?}
-      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:?}
+      - AUTH_PASSWORD=${AUTH_PASSWORD:-$(openssl rand -hex 16)}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-$(openssl rand -hex 32)}
       # Browser sidecar (internal Docker networking)
       - BROWSER_CDP_URL=http://browser:9222
       - BROWSER_EVALUATE_ENABLED=${BROWSER_EVALUATE_ENABLED:-true}
       # Hooks (optional)
-      - HOOKS_ENABLED=${HOOKS_ENABLED:-}
-      - HOOKS_TOKEN=${HOOKS_TOKEN:-}
+      - HOOKS_ENABLED=${HOOKS_ENABLED:-true}
+      - HOOKS_TOKEN=${HOOKS_TOKEN:-$(openssl rand -hex 16)}
     volumes:
       - openclaw-data:/data
     depends_on:
@@ -28,7 +29,7 @@ services:
   browser:
     image: kasmweb/chrome:1.18.0
     environment:
-      - VNC_PW=${VNC_PW:-changeme}
+      - VNC_PW=${VNC_PW:-$(openssl rand -hex 16)}
       - CHROME_ARGS=--remote-debugging-port=9222 --remote-debugging-address=0.0.0.0
     # Browser accessible only within Docker network by default
     # Uncomment labels below to expose VNC web desktop via Coolify proxy
